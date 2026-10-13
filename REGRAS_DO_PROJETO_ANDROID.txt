@@ -1,0 +1,45 @@
+================================================================================
+PROMPT DE IA PARA APLICAÇÃO AUTOMÁTICA DAS REGRAS DO COMPILADOR GITHUB
+Copie e envie o prompt abaixo para qualquer IA (ChatGPT, Claude, Gemini ou Cursor)
+================================================================================
+
+COPIE A PARTIR DA LINHA ABAIXO:
+--------------------------------------------------------------------------------
+Você é um especialista sênior em desenvolvimento Android e automação de builds com Gradle e GitHub Actions.
+
+Por favor, analise, ajuste e estruture o meu projeto Android para que ele atenda a 100% dos requisitos do 'Compilador GitHub' e compile com sucesso no GitHub Actions gerando um APK Release instalável.
+
+Aplique rigorosamente as seguintes regras no código e na estrutura do projeto:
+
+1. ESTRUTURA GRADLE OBRIGATÓRIA:
+   - Garanta o arquivo 'settings.gradle' (ou 'settings.gradle.kts') na raiz contendo:
+     * rootProject.name definido com um nome válido para o app.
+     * include ':app' (e outros módulos se houver).
+     * Repositórios declarados em pluginManagement e dependencyResolutionManagement com google(), mavenCentral() e gradlePluginPortal().
+   - Garanta o 'build.gradle' (ou 'build.gradle.kts') da raiz do projeto com os plugins mapeados.
+   - Garanta o módulo 'app/build.gradle' (ou 'app/build.gradle.kts') aplicando o plugin 'com.android.application'.
+
+2. COMPATIBILIDADE JDK, SDK E GRADLE:
+   - Configure compatibilidade de Java e Kotlin para Java 17 (JavaVersion.VERSION_17).
+   - Defina compileSdk (34 ou 35), targetSdk (34 ou 35) e minSdk (21 ou superior).
+   - Configure 'gradle/wrapper/gradle-wrapper.properties' com uma versão estável (ex: Gradle 8.4 ou superior com AGP correspondente).
+
+3. REQUISITOS DO APK RELEASE:
+   - A compilação é executada estritamente com o comando './gradlew assembleRelease'.
+   - O projeto deve compilar limpo sem erros de sintaxe ou dependências não resolvidas.
+   - Não utilize flavor exclusivo de debug na compilação release.
+
+4. MANIFEST E RECURSOS:
+   - Certifique-se de que 'app/src/main/AndroidManifest.xml' está presente com applicationId/namespace correspondente e a Activity principal configurada com o intent-filter MAIN e LAUNCHER.
+   - Garanta que ícones, temas e strings básicos estejam devidamente mapeados sem referências quebradas.
+
+5. REMOÇÃO DE ARQUIVOS LOCAIS E CACHES:
+   - Remova arquivos locais 'local.properties', pastas 'build/', 'app/build/', '.gradle/' e '.idea/'.
+   - O projeto não pode conter caminhos absolutos locais do computador.
+
+Entregue o código ajustado e a lista dos arquivos prontos para serem compactados na raiz de um arquivo .zip para compilação direta no Compilador GitHub.
+--------------------------------------------------------------------------------
+
+================================================================================
+Fim do Prompt - Compilador GitHub
+================================================================================

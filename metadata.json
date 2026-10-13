@@ -1,0 +1,6 @@
+{
+  "name": "Compilador GitHub",
+  "description": "Compile projetos Android nativos para APK Release direto pelo celular usando GitHub Actions e repositórios privados.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

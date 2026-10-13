@@ -1,0 +1,66 @@
+name: Android Release Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-release:
+    name: Compilar APK Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Permissões de Execução do Gradle Wrapper
+        run: |
+          chmod +x gradlew
+
+      - name: Compilar APK Release
+        run: |
+          ./gradlew assembleRelease --stacktrace --no-daemon
+
+      - name: Verificar e Assinar APK Release
+        run: |
+          set -e
+          RELEASE_APK=$(find . -path "*/build/outputs/apk/release/*.apk" | head -n 1)
+          if [ -z "$RELEASE_APK" ]; then
+            echo "::error::Nenhum APK de release encontrado!"
+            exit 1
+          fi
+          echo "APK encontrado: $RELEASE_APK"
+          mkdir -p release-output
+
+          if [[ "$RELEASE_APK" == *"-unsigned"* ]] || [[ "$RELEASE_APK" == *"-unaligned"* ]]; then
+            echo "Assinando APK de release..."
+            KEYSTORE="/tmp/release.keystore"
+            keytool -genkey -v -keystore "$KEYSTORE" -alias key0 -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=CompiladorGitHub, OU=App, O=Dev, L=City, S=State, C=BR"
+            SIGNED_APK="/tmp/app-release-signed.apk"
+            if command -v apksigner &> /dev/null; then
+              cp "$RELEASE_APK" "$SIGNED_APK"
+              apksigner sign --ks "$KEYSTORE" --ks-pass pass:android --key-pass pass:android "$SIGNED_APK"
+            else
+              jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore "$KEYSTORE" -storepass android -keypass android -signedjar "$SIGNED_APK" "$RELEASE_APK" key0
+            fi
+            cp "$SIGNED_APK" release-output/app-release.apk
+          else
+            cp "$RELEASE_APK" release-output/app-release.apk
+          fi
+
+      - name: Publicar Artefato do APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: release-output/app-release.apk
+          retention-days: 14
